@@ -19,10 +19,11 @@ class AutoStartPrograms(BaseWidget):
     def __init__(self):
         super(AutoStartPrograms,self).__init__('Autostart programs')
 
+   # select script
         self._selectScript = ControlFile('select startup script: ')
         self._selectScript.changed_event = self.SelectScriptChanged
-
-       
+        
+   # select list
         self._autoStartList = ControlCheckBoxList('autostart items')
         self._autoStartList.value = self.AutoStartList()
         self._autoStartList.changed_event = self.AutoStartListChanged
@@ -39,8 +40,8 @@ class AutoStartPrograms(BaseWidget):
 
     def AutoStartScriptSet(self):
         script = self._selectScript.value
+        print(script)
         if script != '':
-            self._label.value = script
             self.writeAutoStartScript(script)
             self.alert("script set as autostart" + script)
 
@@ -85,6 +86,14 @@ Type=Application
 StartupNotify=false
 """
         return(text)
+    
+    def setAutoStart(self,autostartfile,status):
+        if(autostartfile.endswith('.desktop') and status == False):
+            os.rename(autostartfile,autostartfile[:-8])
+        if(autostartfile.endswith('.desktop')==False and status == True):
+            os.rename(autostartfile,autostartfile + '.desktop')
+
+
 
     def AutoStartList(self):
         allentries = [] 
@@ -128,12 +137,6 @@ StartupNotify=false
                 if t == i :
                     checked = True
             self.setAutoStart(self.AutoStartFolder() + str(files[i]),checked)
-
-    def setAutoStart(self,autostartfile,status):
-        if(autostartfile.endswith('.desktop') and status == False):
-            os.rename(autostartfile,autostartfile[:-8])
-        if(autostartfile.endswith('.desktop')==False and status == True):
-            os.rename(autostartfile,autostartfile + '.desktop')
 
 
 
